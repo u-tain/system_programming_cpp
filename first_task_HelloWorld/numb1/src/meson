@@ -1,3 +1,2 @@
 src = include_directories('.')
 subdir('numb1')
-subdir('test')
