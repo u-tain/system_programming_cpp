@@ -1,0 +1,10 @@
+numb1_src = files([
+'main.cc'
+])
+executable(
+'numb1',
+include_directories: src,
+sources: numb1_src,
+dependencies: [],
+install: true
+)
