@@ -1,0 +1,5 @@
+executable(
+  'base64',
+  sources: ['main.cc'],
+  include_directories: src
+)
