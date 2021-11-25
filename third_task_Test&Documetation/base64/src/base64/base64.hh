@@ -1,3 +1,6 @@
+///BASE64
+/** Программа осуществляющая кодирование и декодирование строк в формате BASE64
+*/
 #ifndef BASE64_BASE64_HH
 #define BASE64_BASE64_HH
 
@@ -64,10 +67,14 @@ base64_encoded_size(size_t len) {
     }
     return ((len + 2u) / 3u) * 4u;
 }
-
-void
-base64_encode(const char* first, size_t n, char* result) noexcept {
-    const size_t rem = n%3;
+/// Функция осуществляющая кодирование строки в формат  BASE64
+/** На вход принимает следующие три параметра:
+* @param first  - исходная строка
+* @param n - размер исходной строки
+* @param result - строка куда запишется результат работы программы
+*/
+void base64_encode(const char* first, size_t n, char* result) noexcept {
+    const size_t rem = n%3; 
     const size_t m = (rem == 0) ? n : (n-rem);
     for (size_t i=0; i<m; i+=3) {
         bits24 bits{};
@@ -104,6 +111,12 @@ base64_max_decoded_size(size_t len) noexcept {
 }
 
 size_t
+/// Функция осуществляющая кодирование строки в формат  BASE64
+/** На вход принимает следующие три параметра:
+* @param first  - исходная строка
+* @param n - размер исходной строки
+* @param result - строка куда запишется результат работы программы
+*/
 base64_decode(const char* first, size_t n, char* result) {
     const char* old = result;
     if (n%4) {
