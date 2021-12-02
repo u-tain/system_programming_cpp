@@ -1,5 +1,5 @@
-///BASE64
-/** Программа осуществляющая кодирование и декодирование строк в формате BASE64
+/** /brief BASE64
+* A program for encoding and decoding strings in the BASE64 format
 */
 #ifndef BASE64_BASE64_HH
 #define BASE64_BASE64_HH
@@ -16,7 +16,7 @@ const unsigned char base64_alphabet[64] = {
     'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
     'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3',
     '4', '5', '6', '7', '8', '9', '+', '/'
-};
+}; /** symbols that can be encoded*/
 
 const unsigned char base64_table[128] = {
     77,77,77,77,77,77,77,77,77,77,77,77,77,77,
@@ -47,7 +47,10 @@ union bits24 {
 };
 
 static_assert(sizeof(bits24) >= 3, "bad 24-bit group size");
-
+/** \brief function to check a string for invalid index or symbol
+* \param[in] ch element of string
+* \return index
+*/
 inline unsigned char
 char_to_index(unsigned char ch) {
     if (ch >= 128) {
@@ -59,7 +62,10 @@ char_to_index(unsigned char ch) {
     }
     return result;
 }
-
+/** \brief A function to calculate the length of the string after encoding
+* \param[in] length of string
+* \return size of final string
+*/
 inline size_t
 base64_encoded_size(size_t len) {
     if (len > std::numeric_limits<size_t>::max()/4u*3u-2u) {
@@ -67,14 +73,15 @@ base64_encoded_size(size_t len) {
     }
     return ((len + 2u) / 3u) * 4u;
 }
-/// Функция осуществляющая кодирование строки в формат  BASE64
-/** На вход принимает следующие три параметра:
-* @param first  - исходная строка
-* @param n - размер исходной строки
-* @param result - строка куда запишется результат работы программы
+
+/** \brief A function that encodes a string into the BASE64 format
+* \param[in] first original string
+* \param[in] n the size of the original string
+* \param[in] result a string where the result of the program will be written
 */
-void base64_encode(const char* first, size_t n, char* result) noexcept {
-    const size_t rem = n%3; 
+void
+base64_encode(const char* first, size_t n, char* result) noexcept {
+    const size_t rem = n%3;
     const size_t m = (rem == 0) ? n : (n-rem);
     for (size_t i=0; i<m; i+=3) {
         bits24 bits{};
@@ -94,7 +101,7 @@ void base64_encode(const char* first, size_t n, char* result) noexcept {
         *result++ = base64_alphabet[bits.i1];
         *result++ = pad_character;
         *result++ = pad_character;
-    } else if (rem == 2) {
+    } else   if (rem == 2) {
         bits24 bits{};
         bits.bytes[2] = *first;
         bits.bytes[1] = *++first;
@@ -104,19 +111,24 @@ void base64_encode(const char* first, size_t n, char* result) noexcept {
         *result++ = pad_character;
     }
 }
-
+/**\brief A function to calculate the maximum length of a string after decoding
+* \param[in] len length of oridginal string
+* \return maximum length
+*/
 size_t
 base64_max_decoded_size(size_t len) noexcept {
     return (len / 4u) * 3u;
 }
 
-size_t
-/// Функция осуществляющая кодирование строки в формат  BASE64
-/** На вход принимает следующие три параметра:
-* @param first  - исходная строка
-* @param n - размер исходной строки
-* @param result - строка куда запишется результат работы программы
+/** \brief A function that decodes a string from the BASE64 format
+* \param[in] first original string
+* \param[in] n the size of the original string
+* \param[in] result a string where the result of the program will be written
+* \return decoded string
+* \throw invalid_argument the length of the input string is not a multiple
+* of four, or the string contains invalid characters, or if the string is too large
 */
+size_t
 base64_decode(const char* first, size_t n, char* result) {
     const char* old = result;
     if (n%4) {
