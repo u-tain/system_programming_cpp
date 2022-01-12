@@ -4,9 +4,9 @@ numb1_src = files([
 .cat.hh'
 ])
 executable(
-'numb1',
+'numb5',
 include_directories: src,
-sources: numb1_src,
+sources: numb5_src,
 dependencies: [],
 install: true
 )
