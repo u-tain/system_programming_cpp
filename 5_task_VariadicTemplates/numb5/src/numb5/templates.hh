@@ -1,24 +1,25 @@
 #include <iostream>
 using namespase std;
 
-template <class First, class... Other>
-void make_vector(First first, Other... other)
-{
-    
-  
-  cout << first;
-  print(other...);
+template <class First>
+void make_vector(vector<char>& x, First first) {
+return x.push_back(first);;
 }
-
-template <class T, class ... Args>
-T make_vector(Args&& ... args) {
-return T(std::forward<Args>(args)...);
+template <class First, class ... Other>
+void make_vector(vector<char>& x, First first, Other... other)
+{
+    x.push_back(first);
+    make_vector(x, other...);
 }
 
 template<typename T, typename... Args>
 void message(ostream& streamOut, const char *s, T value, Args... args)
 {
-    make<vector<char>>(3, 'a'); // {'a', 'a', 'a'}
+    vector<char> list;
+    make_vector(list, args...);
+    if list.size()<
+        
+    
     i=0;
     while (*s) {
         if (*s == '%') {
