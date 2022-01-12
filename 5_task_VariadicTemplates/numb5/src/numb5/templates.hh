@@ -4,7 +4,6 @@ using namespase std;
 template<typename T, typename... Args>
 void message(ostream& streamOut, const char *s, T value, Args... args)
 {
-    string param[] { "", impl::to_str(args)... };
     i=0;
     while (*s) {
         if (*s == '%') {
