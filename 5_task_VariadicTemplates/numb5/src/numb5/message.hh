@@ -14,16 +14,13 @@ void make_vector(vector<char>& x, First first, Other... other)
     make_vector(x, other...);
 }
 */
-#include <iostream>
-#include <string.h>
-using namespace std;
-
 inline void message() {}
 inline void message(ostream& streamOut) {} 
+void  message(ostream& streamOut, const char *s) {
+    cout<< s;} 
 template<typename T>
 void message(ostream& streamOut, const char *s, T value)
 {
-
     streamOut<< value;
 }
 template<typename T, typename... Args>
@@ -33,6 +30,8 @@ void message(ostream& streamOut, const char *s, T value, Args... args)
         if (*s == '\0')
             return;
         if (*s =='%'){
+            if (value == '\n'){
+                streamOut<<*s++;}
             s++;
             streamOut<< value;
             message(streamOut, s,args...,'\n');
