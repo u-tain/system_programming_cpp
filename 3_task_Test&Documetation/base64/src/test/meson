@@ -1,0 +1,10 @@
+gtest = dependency('gtest', main: true)
+test(
+        'base64',
+        executable(
+                'base64_test',
+                sources: ['base64_test.cc'],
+                include_directories: src,
+                dependencies: [gtest]
+        )
+)
