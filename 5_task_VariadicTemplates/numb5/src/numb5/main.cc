@@ -1,1 +1,1 @@
-main.cc
+#include <numb5/templates.hh>
