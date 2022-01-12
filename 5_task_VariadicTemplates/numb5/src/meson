@@ -1,1 +1,2 @@
-d
+src = include_directories('.')
+subdir('numb1')
