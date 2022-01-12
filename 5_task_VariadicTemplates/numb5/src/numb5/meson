@@ -1,5 +1,7 @@
 numb1_src = files([
-'main.cc'
+'main.cc',
+'message.hh',
+.cat.hh'
 ])
 executable(
 'numb1',
