@@ -14,28 +14,35 @@ void make_vector(vector<char>& x, First first, Other... other)
     make_vector(x, other...);
 }
 */
+#include <iostream>
+#include <string.h>
+using namespace std;
 
 inline void message() {}
 inline void message(ostream& streamOut) {} 
 template<typename T>
 void message(ostream& streamOut, const char *s, T value)
 {
+
     streamOut<< value;
 }
 template<typename T, typename... Args>
 void message(ostream& streamOut, const char *s, T value, Args... args)
 {
-    while (*s!="%") {
+    while (*s) {
         if (*s == '\0')
             return;
-            streamOut<<*s;
+        if (*s =='%'){
+            s++;
+            streamOut<< value;
+            message(streamOut, s,args...,'\n');
+            return;
+        }
+        streamOut<<*s++;
     };
-        s++;
-        streamOut<< value;
-        message(streamOut, s,args...);
 }
 int main()
 {
       message(cout, "% + % = %\n", 'a', 2, 3.0);
       return 0;
-}           
+}
