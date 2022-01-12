@@ -57,7 +57,7 @@ TEST(base64, decode) {
         o.resize(base64_max_decoded_size(0));
         base64_decode("",0,&o[0]);
         EXPECT_EQ("",o);
-        
+
         string f;
         f.resize(base64_max_decoded_size(8));
         base64_decode("K2NhdC8=",8,&f[0]);
@@ -165,4 +165,19 @@ TEST(base64, encode_size){
 TEST(base64, decode_max_size){
         size_t len = base64_max_decoded_size(8);
         EXPECT_EQ(len, 6u);
+}
+TEST(base64, ch_to_indx){
+        string x;
+        EXPECT_THROW({
+        try{ x.resize(char_to_index(128));}
+        catch(const invalid_argument& err){
+        EXPECT_STREQ("bad base64 string",err.what());
+        throw;}},invalid_argument);
+
+        string y;
+        EXPECT_THROW({
+        try{ x.resize(char_to_index(129));}
+        catch(const invalid_argument& err){
+        EXPECT_STREQ("bad base64 string",err.what());
+        throw;}},invalid_argument);
 }
