@@ -8,5 +8,5 @@ auto cat(array<T,N>& first, Array&...arrays)->array<T,N*sizeof...(aarays)+1>
   array<T,N>(sizeof ...(arrays)+1)> concatenation;
   for (int i=0; i<sizeof...(arrays)1;i++)
     for( int j = 0; j<N;j++)
-      concatenation[i*N+j] = c[i][j];
+      concatenation[i*N+j] = C[i][j];
   return concatenation;
