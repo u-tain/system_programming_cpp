@@ -1,0 +1,10 @@
+gtest = dependency('gtest', main: true)
+test(
+        'template',
+        executable(
+                'template_test',
+                sources: ['template_test.cc'],
+                include_directories: src,
+                dependencies: [gtest]
+        )
+)
