@@ -21,19 +21,19 @@ TEST(templates, messages){
         EXPECT_EQ(y, "a + 2 = %\n");
   
         os.str("");      
-        message(cout, "% + % = 5\n", 'a', 2, 3.0);
+        message(os, "% + % = 5\n", 'a', 2, 3.0);
         string z;
         z = os.str();
         EXPECT_EQ(z, "a + 2 = 5\n");
   
         os.str("");      
-        message(cout, "% + % = %\n"); 
+        message(os, "% + % = %\n"); 
         string c;
         c = os.str();
         EXPECT_EQ(c, "% + % = %\n");
   
         os.str("");      
-        message(cout);
+        message(os);
         string v;
         v = os.str();
         EXPECT_EQ(v, "");
