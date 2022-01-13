@@ -1,7 +1,7 @@
 
 #include <iostream>
 using namespace std;
-template<temolate First, tipename...Last>
+template<template First, tipename...Last>
   struct Tie{
     int N;
   int M = sizeof...(Last)+1;
