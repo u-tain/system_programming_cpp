@@ -58,6 +58,11 @@ TEST(templates, cat){
         array<float, 3> vec6 = { 7.0f,8.0f,9.0f };
         array<float, 9> vec7 = cat(vec1,vec2,vec6);
         array<float, 9> vec8{ 1.0f,2.0f,3.0f,4.0f,5.0f,6.0f,7.0f,8.0f,9.0f};
-        EXPECT_EQ(vec7, vec7);
+        EXPECT_EQ(vec7, vec8);
+        
+        array<float, 3> vec9 = { 10.0f,11.0f,12.0f };
+        array<float, 12> vec10 = cat(vec1,vec2,vec6,vec9);
+        array<float, 12> vec11{ 1.0f,2.0f,3.0f,4.0f,5.0f,6.0f,7.0f,8.0f,9.0f,10.0f,11.0f,12.0f};
+        EXPECT_EQ(vec10, vec11);
 }
   
