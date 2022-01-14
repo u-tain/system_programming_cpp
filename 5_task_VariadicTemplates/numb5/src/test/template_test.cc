@@ -65,4 +65,21 @@ TEST(templates, cat){
         array<float, 12> vec11{ 1.0f,2.0f,3.0f,4.0f,5.0f,6.0f,7.0f,8.0f,9.0f,10.0f,11.0f,12.0f};
         EXPECT_EQ(vec10, vec11);
 }
-  
+
+TEST(templates, tie){
+        array<float, 6> r{ 1.0f,2.0f,3.0f,4.0f,5.0f,6.0f};
+        array<float,3> res1{ 1.0f,2.0f,3.0f}
+        array<float,3> res2{ 4.0f,5.0f,6.0f}
+        array<float,3> v1, v2;
+        tie(v1,v2) = r;
+        EXPECT_EQ(v1, res1);
+        EXPECT_EQ(v2, res2);
+        
+        array<float, 9> q{ 1.0f,2.0f,3.0f,4.0f,5.0f,6.0f,7.0f,8.0f,9.0f };
+        array<float,3> v3, v4, v5;
+        array<float,3> res3{ 7.0f,8.0f,9.0f}
+        tie(v3,v4,v5) = q;
+        EXPECT_EQ(v3, res1);
+        EXPECT_EQ(v4, res2);
+        EXPECT_EQ(v5, res3);
+
