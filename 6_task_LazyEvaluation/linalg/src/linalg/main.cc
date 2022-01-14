@@ -1,6 +1,4 @@
-
 #include <iostream>
-
 #include <linalg/linalg.hh>
 
 int main(int argc, char* argv[]) {
