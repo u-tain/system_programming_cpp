@@ -8,7 +8,7 @@ class Expression {};
 
 template <class T>
 class Vector;
-
+/// метод для определения размера массива
 template <class E>
 Vector<typename E::value_type> evaluate(const E& expr) {
     using value_type = typename E::value_type;
@@ -59,13 +59,13 @@ public:
     }
 
 };
-
+/// оператор вывода
 template <class E>
 typename std::enable_if<std::is_base_of<Expression,E>::value,std::ostream&>::type
 operator<<(std::ostream& out, const E& expr) {
     expr.display(out); return out;
 }
-
+/// Реализация операции Plus
 template <class E1, class E2>
 class Plus: public Expression {
 
@@ -87,7 +87,7 @@ public:
     }
 
 };
-
+/// оператор сложения
 template <class E1, class E2>
 typename std::enable_if<std::is_base_of<Expression,E1>::value &&
                         std::is_base_of<Expression,E2>::value,Plus<E1,E2>>::type
@@ -95,4 +95,25 @@ operator+(const E1& a, const E2& b) {
     return Plus<E1,E2>(a,b);
 }
 
+/// реализация унарного -
+template <class E>
+class M: public Expression {
+public:
+    using value_type =
+        typename std::common_type<typename E::value_type>::type;
+private:
+    const E& _a;  
+public:
+    explicit M(const E& a): _a(a) {}
+    value_type evaluate(int i) { return - this-> _a.evaluate(i); }
+    value_type evaluate(int i) const { return - this-> _a.evaluate(i); }
+    int size() const { return this->_a.size(); }
+    void display(std::ostream& out) const {
+        out << "M(" << this->_a << ')';
+    }
+template <class E>
+typename std::enable_if<std::is_base_of<Expression,E>::value ,M<E>>::type
+operator-(const E& a) {
+    return M<E>(a);
+}
 #endif // vim:filetype=cpp
