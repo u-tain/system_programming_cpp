@@ -2,11 +2,11 @@
 #include <string.h>
 
 using namespace std;
-
 inline void message() {}
-inline void message(ostream& streamOut) {} 
-void  message(ostream& streamOut, const char *s) {
-    cout<< s;} 
+inline void message(ostream& streamOut) {}
+void  message(ostream& streamOut, const char* s) {
+    streamOut << s;
+}
 template<typename T>
 void message(ostream& streamOut, const char *s, T value)
 {
