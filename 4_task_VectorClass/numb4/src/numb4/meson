@@ -1,0 +1,11 @@
+numb4_src = files([
+'main.cc',
+'vector.hh'
+])
+executable(
+'numb4',
+include_directories: src,
+sources: numb4_src,
+dependencies: [],
+install: true
+)
