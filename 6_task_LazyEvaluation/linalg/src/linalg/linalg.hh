@@ -220,8 +220,7 @@ private:
 
 public:
     explicit Del(const E1& a, const E2& b): _a(a), _b(b) {}
-    value_type evaluate(int i) { 
-        if (this->_b.evaluate(i) == 0){return this->_a.evaluate(i) / this->_b.evaluate(i); }
+    value_type evaluate(int i) {return this->_a.evaluate(i) / this->_b.evaluate(i); }
     value_type evaluate(int i) const { return this->_a.evaluate(i) / this->_b.evaluate(i); }
     int size() const { return this->_a.size(); }
     void display(std::ostream& out) const {
@@ -235,5 +234,34 @@ typename std::enable_if<std::is_base_of<Expression,E1>::value &&
                         std::is_base_of<Expression,E2>::value,Del<E1,E2>>::type
 operator/(const E1& a, const E2& b) {
     return Del<E1,E2>(a,b);
+}
+/// реализация операратора >
+template <class E1, class E2>
+class Sravn1: public Expression {
+
+public:
+    using value_type =
+        typename std::common_type<typename E1::value_type,typename E2::value_type>::bool;
+
+private:
+    const E1& _a;
+    const E2& _b;
+
+public:
+    explicit Sravn1(const E1& a, const E2& b): _a(a), _b(b) {}
+    value_type evaluate(int i) {return this->_a.evaluate(i) > this->_b.evaluate(i);}
+    value_type evaluate(int i) const return this->_a.evaluate(i) > this->_b.evaluate(i);
+    int size() const { return this->_a.size(); }
+    void display(std::ostream& out) const {
+        out << "Sravn1(" << this->_a << ", " << this->_b << ')';
+    }
+
+};
+
+template <class E1, class E2>
+typename std::enable_if<std::is_base_of<Expression,E1>::value &&
+                        std::is_base_of<Expression,E2>::value,Sravn1<E1,E2>>::bool
+operator>(const E1& a, const E2& b) {
+    return Sravn1<E1,E2>(a,b);
 }
 #endif // vim:filetype=cpp
