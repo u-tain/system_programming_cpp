@@ -82,4 +82,12 @@ TEST(templates, tie){
         EXPECT_EQ(v3, res1);
         EXPECT_EQ(v4, res2);
         EXPECT_EQ(v5, res3);
-
+        
+        array<float,3> v6;
+        tie(v6) = r;
+        EXPECT_EQ(v6, res1);
+        
+        array<float,6> v7;
+        tie(v7) = r;
+        EXPECT_EQ(v7, r);
+}     
