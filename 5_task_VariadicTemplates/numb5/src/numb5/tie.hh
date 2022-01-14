@@ -3,7 +3,7 @@
 #include<array>
 
 using namespace std;
-template<typename First, typename... Last>
+/*template<typename First, typename... Last>
   struct Tie{
     int N;
     int M = sizeof...(Last)+1;
@@ -26,4 +26,27 @@ template<typename First, typename... Last>
 template<typename First, typename... Last>
 auto tie(First& first, Last&... last)-> Tie<First, Last...>{
     return Tie<First, Last...>(first, last...);
+}*/
+
+template<typename First, typename...Args>
+struct Tie {
+    int N;
+    int M = sizeof...(Args) + 1;
+    First* arr[sizeof...(Args) + 1];
+    Tie(First& first, Args&...args) {
+        N = first.size();
+        First* other[sizeof...(Args)+1] = {&first, &args ... };
+        for (size_t i = 0; i < M; i++)
+            arr[i] = other[i];
+    }
+    template<class T, long unsigned K>
+    auto operator=(const array<T,K>& rhs) {
+        for (size_t i = 0; i < M; i++)
+            for (size_t j = 0; j < N; j++)
+               (*arr[i])[j] = rhs[i * N + j];
+    }
+};
+template<typename First, typename... Args>
+auto tie(First& first, Args&... args) {
+    return Tie<First, Args...>(first, args...);
 }
