@@ -1,130 +1,142 @@
+
 #include <iostream>
 #include <utility>
 #include <algorithm>
 #include <cstddef>
 
-namespace Vektor {
-	template <class T>
-	class Vector {
-		private:
-            T* mass = nullptr;
-            unsigned long len;
-		
-		public:
-			Vector() {
-				len = 0;
-				mass = nullptr;
-			}
-			
-			~Vector() { delete [] mass; }
-			
-			Vector(unsigned long size) {
-				len = size;
-				mass = new T[size];
-			}
-			
-			Vector(std::initializer_list<T> sp) {
-				len = sp.size();
-				if (len > 0) {
-					mass = new T[sp.size()];
-					std::copy(sp.begin(), sp.end(), mass);
-				} else { mass = nullptr; }
-			}
-			
-			Vector(Vector&& vec){
-				len = vec.size();
-				mass = vec.mass;
-				vec.mass = nullptr;
-			}
-			
-			const T& operator[] (unsigned long j) const { return mass[j]; }
-			
-			T& operator[] (unsigned long j) { return mass[j]; }
-			
-			Vector(const Vector& vec) {
-				len = vec.size();
-				mass = new T[vec.size()];
-				for (auto i = 0; i < vec.size(); i++) {
-					mass[i] = vec[i];
-				}
-			}
-			
-			bool operator ==(const Vector &vec) const {
-				if (len != vec.len) { return false; }
-				for (auto i = 0; i < len; i++) {
-					if (mass[i] != vec[i]) { return false; }
-				}
-				return true;
-			}
-			
-			Vector& operator=(const Vector& vec) {
-				vector curr(vec);
-				this -> swap(curr);
-				return *this; 
-			}
-			
-			Vector& operator=(Vector&& vec) {
-				this -> swap(vec);
-				return *this;
-			}
-			
-			T* begin() { return mass; }
-			const T* begin() const { return mass; }
-			
-			T* end() { return (mass + len); }
-			const T* end() const { return (mass + len); }
-			
-			unsigned long size() const { return len; }
-			
-			void push_back(const T& elem) {
-				T* curr = new T[len + 1];
-				for (auto i = 0; i < len; i++) {
-					curr[i] = std::move(mass[i]);
-				}
-				curr[len] = std::move(elem);
-				len = len + 1;
-				delete [] mass; 
-				mass = curr;
-			}
-        
-			void push_back(T&& elem) {
-				T* curr = new T[len + 1];
-				for (auto i = 0; i < len; i++) {
-					curr[i] = std::move(mass[i]);
-				}
-				curr[len] = std::move(elem);
-				len = len + 1;
-				delete [] mass;
-				mass = curr;
-			}
-			
-			
-			void pop_back() { erase(this -> end() - 1); }
-			
-			void erase(const T* p_1, const T* p_2) {
-				raz = p_2 - p_1
-				T* curr = new T[len-raz];
-				for(auto i = this -> begin(); i != p_1 ; i++) {
-					curr[i - begin()] = std::move(mass[i - begin()]);
-				}
-				for(auto i = p_2; i != end() ; i++) {
-					curr[i - begin()-(p_2 - p_1)] = std::move(mass[i - begin()]);
-				}
-				len = len - (p_2 - p_1); 
-				delete [] mass;
-				mass = curr;
-			}
-		
-			void erase(const T* p) {
-				erase(p, p + 1);
-			}	
-			
-			void swap(Vector & vec) {
-				std::swap(len, vec.len);
-				std::swap(mass, vec.mass);
-			}
-	};
 
-    template <class T>
-    void swap(vector<T> lev, vector<T> prav) { lev.swap(prav); }
+
+template <class T>
+class Vector {
+private:
+        T* arr = nullptr;
+        int len;
+
+public:
+        Vector() {
+                arr = nullptr;
+                len = 0;
+        }
+
+        Vector(int size) {
+                arr = new T[size];
+                len = size;
+        }
+
+        ~Vector() {
+                delete[] arr;
+        }
+
+        Vector(std::initializer_list<T> data) {
+                len = data.size();
+                if (len > 0) {
+                        arr = new T[data.size()];
+                        std:: copy(data.begin(), data.end(), arr);
+                }
+                else
+                        arr = nullptr;
+        }
+
+        T& operator[] (unsigned long j) { return arr[j]; }
+        const T& operator[] (unsigned long j) const { return arr[j]; }
+
+        void push_back(T&& data)
+        {
+                T* result = new T[++len];
+                for (int i = 0; i < len; i++)
+                {
+                        if (i != len - 1)
+                                result[i] = std::move(arr[i]);
+                        else
+                        {
+                                result[i] = std::move(data);
+                                break;
+                        }
+                }
+                delete[] arr;
+                arr = result;
+        }
+
+        void push_back(const T& data) {
+                T* result = new T[++len];
+                for (int i = 0; i < len; i++)
+                {
+                        if (i != len - 1)
+                                result[i] = std::move(arr[i]);
+                        else
+                        {
+                                result[i] = std::move(data);
+                                break;
+                        }
+                }
+                delete[] arr;
+                arr = result;
+        }
+
+        void pop_back() { erase(this->end() - 1); }
+
+        void erase(const T* index1, const T* index2) {
+                T* result = new T[len - (index2 - index1)];
+                for (auto i = this->begin(); i != index1; i++) {
+                        result[i - begin()] = std::move(arr[i - begin()]);
+                }
+                for (auto i = index2; i != end(); i++) {
+                        result[i - begin() - (index2 - index1)] = std:: move(arr[i - begin()]);
+                }
+                len = len - (index2 - index1);
+                delete[] arr;
+                arr = result;
+        }
+
+        void erase(const T* index) {
+                erase(index, index + 1);
+        }
+
+        T* begin() { return &arr[0]; }
+        const T* begin() const { return &arr[0]; }
+
+        T* end() { return &arr[len]; }
+        const T* end() const {return &arr[len];}
+
+        int size() const { return len; }
+
+        void swap(Vector&& vec) {
+                std::swap(len, vec.len);
+                std::swap(arr, vec.arr);
+        }
+
+        Vector(Vector&& vec) {
+                len = vec.size();
+                arr = vec.arr;
+                vec.arr = nullptr;
+        }
+        Vector(const Vector& vec) {
+                len = vec.size();
+                arr = new T[vec.size()];
+                for (auto i = 0; i < vec.size(); i++) {
+                        arr[i] = vec[i];
+                }
+        }
+
+        bool operator ==(const Vector& vec) const {
+                if (len != vec.len) { return false; }
+                for (auto i = 0; i < len; i++) {
+                        if (arr[i] != vec[i]) { return false; }
+                }
+                return true;
+        }
+
+        Vector& operator=(const Vector& vec) {
+                Vector result(vec);
+                this->swap(std::move(result));
+                return *this;
+        }
+
+        Vector& operator=(Vector&& vec) {
+                this->swap(std::move(vec));
+                return *this;
+        }
 };
+
+template <class T>
+void swap(Vector<T> l, Vector<T> r) { l.swap(r); }
