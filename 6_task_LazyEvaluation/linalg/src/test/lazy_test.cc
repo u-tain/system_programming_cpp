@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include<iostream>
-#include(linalg/linalg.hh>
+#include<linalg/linalg.hh>
 
 using namespace std;
 
