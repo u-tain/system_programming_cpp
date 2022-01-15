@@ -1,0 +1,10 @@
+gtest = dependency('gtest', main: true)
+test(
+        'lazy_evaluate',
+        executable(
+                'lazy_test',
+                sources: ['lazy_test.cc'],
+                include_directories: src,
+                dependencies: [gtest]
+        )
+)
