@@ -2,10 +2,11 @@ numb10_src = files([
 'main.cc',
 'merge_sort.hh'
 ])
+threads = dependency('threads')
 executable(
 'numb10',
 include_directories: src,
 sources: numb10_src,
-dependencies: [],
+dependencies: [threads],
 install: true
 )
