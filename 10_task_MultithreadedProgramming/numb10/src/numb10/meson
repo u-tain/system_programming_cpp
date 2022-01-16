@@ -1,0 +1,11 @@
+numb10_src = files([
+'main.cc',
+'merge_sort.hh'
+])
+executable(
+'numb10',
+include_directories: src,
+sources: numb10_src,
+dependencies: [],
+install: true
+)
