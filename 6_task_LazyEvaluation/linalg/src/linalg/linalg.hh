@@ -1,3 +1,4 @@
+
 #ifndef LINALG_LINALG_HH
 #define LINALG_LINALG_HH
 
@@ -14,27 +15,14 @@ Vector<typename E::value_type> evaluate(const E& expr) {
     using value_type = typename E::value_type;
     const auto n = expr.size();
     Vector<value_type> result(n);
-    for (int i=0; i<n; ++i) {
-        result(i) = expr.evaluate(i);
-    }
-    return result;
-}
-template <class E>
-bool evaluate1(const E& expr) {
-    using value_type = typename E::value_type;
-    const auto n = expr.size();
-    bool result = true;
     for (int i = 0; i < n; ++i) {
-        if (result == expr.evaluate(i))
-            result = true;
-        else
-            result = false;
+        result(i) = expr.evaluate(i);
     }
     return result;
 }
 
 template <class T>
-class Vector: public Expression {
+class Vector : public Expression {
 
 public:
     using value_type = T;
@@ -44,12 +32,12 @@ private:
 
 public:
 
-    Vector(std::initializer_list<T> rhs): _data(rhs) {}
-    explicit Vector(int n): _data(n) {}
+    Vector(std::initializer_list<T> rhs) : _data(rhs) {}
+    explicit Vector(int n) : _data(n) {}
     template <class E>
     Vector(const E& expr,
-           typename std::enable_if<std::is_base_of<Expression,E>::value,E>::type* dummy=nullptr):
-    Vector(::evaluate(expr)) {}
+        typename std::enable_if<std::is_base_of<Expression, E>::value, E>::type* dummy = nullptr) :
+        Vector(::evaluate(expr)) {}
 
     Vector() = default;
     ~Vector() = default;
@@ -68,7 +56,7 @@ public:
         }
         return false;
     }
-    bool operator==(const Vector& rhs) const {return !(*this != rhs);}
+    bool operator==(const Vector& rhs) const { return !(*this != rhs); }
 
     T& operator()(int i) { return this->_data[i]; }
     const T& operator()(int i) const { return this->_data[i]; }
@@ -79,31 +67,31 @@ public:
         out << "Vector(";
         const auto n = size();
         if (n != 0) { out << this->_data.front(); }
-        for (int i=1; i<n; ++i) { out << ',' << this->_data[i]; }
+        for (int i = 1; i < n; ++i) { out << ',' << this->_data[i]; }
         out << ')';
     }
 
 };
 // реализация бинарного +
 template <class E>
-typename std::enable_if<std::is_base_of<Expression,E>::value,std::ostream&>::type
+typename std::enable_if<std::is_base_of<Expression, E>::value, std::ostream&>::type
 operator<<(std::ostream& out, const E& expr) {
     expr.display(out); return out;
 }
 
 template <class E1, class E2>
-class Plus: public Expression {
+class Plus : public Expression {
 
 public:
     using value_type =
-        typename std::common_type<typename E1::value_type,typename E2::value_type>::type;
+        typename std::common_type<typename E1::value_type, typename E2::value_type>::type;
 
 private:
     const E1& _a;
     const E2& _b;
 
 public:
-    explicit Plus(const E1& a, const E2& b): _a(a), _b(b) {}
+    explicit Plus(const E1& a, const E2& b) : _a(a), _b(b) {}
     value_type evaluate(int i) { return this->_a.evaluate(i) + this->_b.evaluate(i); }
     value_type evaluate(int i) const { return this->_a.evaluate(i) + this->_b.evaluate(i); }
     int size() const { return this->_a.size(); }
@@ -114,10 +102,10 @@ public:
 };
 
 template <class E1, class E2>
-typename std::enable_if<std::is_base_of<Expression,E1>::value &&
-                        std::is_base_of<Expression,E2>::value,Plus<E1,E2>>::type
-operator+(const E1& a, const E2& b) {
-    return Plus<E1,E2>(a,b);
+typename std::enable_if<std::is_base_of<Expression, E1>::value&&
+    std::is_base_of<Expression, E2>::value, Plus<E1, E2>>::type
+    operator+(const E1& a, const E2& b) {
+    return Plus<E1, E2>(a, b);
 }
 
 /// реализация унарного -
@@ -301,8 +289,8 @@ private:
 
 public:
     explicit All(const E& a) : _a(a) {}
-    value_type evaluate(int i) { return this->_a.evaluate1(i); }
-    value_type evaluate(int i) const { return this-> _a.evaluate1(i); }
+    value_type evaluate(int i) { return this->_a.evaluate(i); }
+    value_type evaluate(int i) const { return this->_a.evaluate(i); }
     int size() const { return this->_a.size(); }
     void display(std::ostream& out) const {
         out << "All(" << this->_a << ')';
@@ -311,9 +299,17 @@ public:
 };
 
 template <class E>
-auto all(const E& a) {
-    return All<E>(a);;
-}
+typename std::enable_if<std::is_base_of<Expression, E>::value, bool>::type
+all(const E& a) {
+    for (int i = 0; i < a.size(); i++) {
+        if (!a.evaluate(i)){
+            std::cout << a << std::endl;
+        return false;
+    }
+    }
+
+    return true;
+};
 
 
 /// реализация ?:
@@ -333,7 +329,7 @@ private:
 public:
     explicit Where(const E1& a, const E2& b, const E3& c) : _a(a), _b(b), _c(c) {}
     value_type evaluate(int i) { return this->_a.evaluate(i) ? this->_b.evaluate(i) : this->_c.evaluate(i); }
-    value_type evaluate(int i) const { return this->_a.evaluate(i) ? this->_b.evaluate(i): this->_c.evaluate(i); }
+    value_type evaluate(int i) const { return this->_a.evaluate(i) ? this->_b.evaluate(i) : this->_c.evaluate(i); }
     int size() const { return this->_a.size(); }
     void display(std::ostream& out) const {
         out << "Where(" << this->_a << ", " << this->_b << ')';
@@ -345,6 +341,7 @@ template <class E1, class E2, class E3>
 typename std::enable_if<std::is_base_of<Expression, E1>::value&&
     std::is_base_of<Expression, E2>::value&& std::is_base_of<Expression, E3>::value, Where<E1, E2, E3>>::type
     where(const E1& a, const E2& b, const E3& c) {
-    return Where<E1, E2, E3>(a, b,c);
+    return Where<E1, E2, E3>(a, b, c);
 }
 #endif // vim:filetype=cpp
+
