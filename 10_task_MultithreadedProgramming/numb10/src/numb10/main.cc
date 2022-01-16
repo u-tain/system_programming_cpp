@@ -1,5 +1,8 @@
 #include<iostream>
 #include<numb10/merge_sort.hh>
 
-int main(){
+int main()
+{
+	get_time();
+	return 0;
 }
