@@ -1,10 +1,18 @@
 #include <gtest/gtest.h>
+#include<numb10/merge_sort.hh>
 
 using namespace std;
 TEST(merge, sort) {
-        vector<float> x;
-        merge_sort_multithread(arr2, buffer, threads_count);
-        EXPECT_EQ(0u, x.size());
-        x.push_back(1);
-        EXPECT_EQ(1u, x.size());
+        unsigned int threads_count = thread::hardware_concurrency();
+        vector<int> x;
+        vector<int> y;
+        vector<int> buff1;
+        generate_int_array(x, 1000);
+	for (int i = 0; i < 1000; ++i)
+		y.push_back(x[i]);
+                buff1.push_back(0);
+        merge_sort(x, buff1, 1000, 0);
+        merge_sort_multithread(y, buff1, threads_count);
+        EXPECT_EQ(x, y);
+
 }
