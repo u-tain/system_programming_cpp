@@ -1,9 +1,12 @@
 #include <gtest/gtest.h>
 #include<numb10/merge_sort.hh>
+#include <thread>
+#include <iostream>
+#include <vector>
 
 using namespace std;
 TEST(merge, sort) {
-        unsigned int threads_count = thread::hardware_concurrency();
+        unsigned int threads_count = hardware_concurrency();
         vector<int> x;
         vector<int> y;
         vector<int> buff1;
