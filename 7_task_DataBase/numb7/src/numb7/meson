@@ -1,0 +1,11 @@
+numb7_src = files([
+'main.cc',
+'database.hh'
+])
+executable(
+'numb7',
+include_directories: src,
+sources: numb7_src,
+dependencies: [],
+install: true
+)
