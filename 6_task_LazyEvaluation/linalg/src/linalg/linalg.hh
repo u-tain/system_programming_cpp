@@ -1,4 +1,3 @@
-
 #ifndef LINALG_LINALG_HH
 #define LINALG_LINALG_HH
 
@@ -20,6 +19,7 @@ Vector<typename E::value_type> evaluate(const E& expr) {
     }
     return result;
 }
+
 
 template <class T>
 class Vector : public Expression {
@@ -301,14 +301,11 @@ public:
 template <class E>
 typename std::enable_if<std::is_base_of<Expression, E>::value, bool>::type
 all(const E& a) {
+    bool result = true;
     for (int i = 0; i < a.size(); i++) {
-        if (!a.evaluate(i)){
-            std::cout << a << std::endl;
-        return false;
+        result &= a.evaluate(i);
     }
-    }
-
-    return true;
+    return result;
 };
 
 
@@ -344,4 +341,3 @@ typename std::enable_if<std::is_base_of<Expression, E1>::value&&
     return Where<E1, E2, E3>(a, b, c);
 }
 #endif // vim:filetype=cpp
-
