@@ -1,140 +1,160 @@
-#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
-#include <vector>
 #include <map>
-#include <string>
-#include <algorithm>
 #include <iterator>
 #include <ranges>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
 
 struct Account {
-	unsigned int id; // идентификатор
-	std::string login; // логин
-	std::string name; // имя
-	std::string shell; // оболочка
-	std::string home_directory; // домашняя директория
+    unsigned int id; // идентификатор
+    string login; // логин
+    string name; // имя
+    string shell; // оболочка
+    string home_directory; // домашняя директория
 };
 
-std::vector<Account> generate_db(int num_sh, int num_bash, int num_ksh, int num_others, bool doub = false)
+vector<Account> LoadData(int sh, int bash, int ksh, int csh, int tcsh, int duplicate = 0)
 {
-	std::vector<Account> result;
-	int i = num_sh+num_bash+num_ksh+num_others;
-	while ((num_sh>0) || (num_bash > 0) || (num_ksh > 0) || (num_others > 0))
-	{
-		Account tmp;
-		tmp.id = i;
-		if ((i % 5 == 0)&&(doub)) tmp.id = i + 1;
-		tmp.login = "login_" + std::to_string(i);
-		tmp.name = "name_" + std::to_string(i);
-		tmp.home_directory = "/home/" + tmp.name;
-		//std::cout << i << std::endl;
-		i--;
-		if (num_sh > 0)
-		{
-			tmp.shell = "/bin/sh";
-			num_sh--;
-			result.push_back(tmp);
-			continue;
-		}
-		if (num_bash > 0)
-		{
-			tmp.shell = "/bin/bash";
-			num_bash--;
-			result.push_back(tmp);
-			continue;
-		}
-		if (num_ksh > 0)
-		{
-			tmp.shell = "/bin/ksh";
-			num_ksh--;
-			result.push_back(tmp);
-			continue;
-		}
-		if (num_others > 0)
-		{
-			tmp.shell = "other";
-			num_others--;
-			result.push_back(tmp);
-			continue;
-		}
-		
-	};
-	return result;
+    vector<Account> result;
+    int i = sh + bash + ksh + csh + tcsh;
+    for (int j = 1; j < i + 1; j++) {
+        Account rec;
+        rec.id = j;
+        if ((duplicate != 0) && (j % 2 == 0)){
+            duplicate--;
+            rec.id += 1;
+        }
+        rec.login = "login" + to_string(i);
+        rec.name = "user" + to_string(i);
+        rec.home_directory = "home/" + rec.name;
+        if (sh > 0)
+        {
+            rec.shell = "/bin/sh";
+            sh--;
+            result.push_back(rec);
+        }
+        else {
+            if (bash > 0)
+            {
+                rec.shell = "/bin/bash";
+                bash--;
+                result.push_back(rec);
+            }
+            else {
+                if (ksh > 0)
+                {
+                    rec.shell = "/bin/ksh";
+                    ksh--;
+                    result.push_back(rec);
+                }
+                else {
+                    if (csh > 0)
+                    {
+                        rec.shell = "/bin/csh ";
+                        csh--;
+                        result.push_back(rec);
+                    }
+                    else
+                    {
+                        if (tcsh > 0)
+                        {
+                            rec.shell = "/bin/tcsh ";
+                            tcsh--;
+                            result.push_back(rec);
+
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    return result;
+};
+
+map<int, Account> LoadData_map(const vector<Account>& base)
+{
+    map<int, Account> result;
+    for (auto i : base)
+    {
+        result.insert({ i.id, i });
+    }
+    return result;
 }
 
-std::map<int, Account> generate_db_map(const std::vector<Account>& db)
+unordered_map<int, Account> LoadData_unordered_map(const vector<Account>& base)
 {
-	std::map<int, Account> result;
-	for (auto i : db)
-	{
-		result.insert({ i.id, i});
-	}
-	return result;
+    unordered_map<int, Account> result;
+    for (auto i : base)
+    {
+        result.insert({ i.id, i });
+    }
+    return result;
 }
 
-std::unordered_map<int, Account> generate_db_unordered_map(const std::vector<Account>& db)
+unordered_set<string> create_unordered_set_frombase(const vector<Account>& base)
 {
-	std::unordered_map<int, Account> result;
-	for (auto i : db)
-	{
-		result.insert({ i.id, i });
-	}
-	return result;
+    unordered_set<string> result;
+    for (auto i : base)
+    {
+        result.insert(i.shell);
+    }
+    return result;
+}
+bool Bash(const Account& obj)
+{
+    if (obj.shell == "/bin/bash")
+        return true;
+    else
+        return false;
 }
 
-std::unordered_set<std::string> create_unordered_set_fromdb(const std::vector<Account>& db)
-{
-	std::unordered_set<std::string> result;
-	for (auto i : db)
-	{
-		result.insert(i.shell);
-	}
-	return result;
+auto task_1(vector<Account> base) {
+    auto x = find_if(base.begin(), base.end(), Bash);
+    vector<Account> result;
+    while (true)
+    {
+        x = find_if(x, base.end(), Bash);
+        if (x != base.end()) {
+            result.push_back(*x);
+            ++x;
+        }
+        else break;
+    }
+    return result;
 }
-bool isBash(const Account& obj)
-{
-	return !((bool)(obj.shell.compare("/bin/bash")));
-}
-int main()
-{
-	//one
-	std::vector<Account> db = generate_db(330, 24, 500, 450);
-	auto it = std::ranges::find_if(db.begin(), db.end(), isBash);
-	std::vector<Account> result1;
-	while (true)
-	{
-		it = std::ranges::find_if(it, db.end(), isBash);
-		if (it != db.end()) {
-			result1.push_back(*it);
-	//		std::cout << (*it).id << std::endl;
-			++it;
-		}
-		else break;
-	}
-	//two
-	std::map<int, Account> dbm = generate_db_map(db);
-	std::vector<Account> result2;
-	for (std::map<int, Account>::iterator i = dbm.lower_bound(1); (i!=dbm.upper_bound(1000) && i != dbm.end()); i++)
-	{
-		result2.push_back(i->second);
-	}
-	//three
-	std::unordered_map<std::string, int> mp;
-	for (Account R : db) {
-		std::string& l = R.shell;
-		if (mp.count(l) == 0)
-			mp.insert({ l,0 });
-		mp[l]++;
-	};
 
-	//four
-	db = generate_db(330, 24, 500, 450, true);
-	std::unordered_set<int> st1;
-	std::vector<Account> result;
-	for (auto i : db)
-	{
-		if (st1.insert(i.id).second == 0) result.push_back(i);
-	}
-	return 0;
+auto task_2(vector<Account> base) {
+    map<int, Account> map_data = LoadData_map(base);
+    vector<Account> result;
+    for (auto i = map_data.lower_bound(1); (i != map_data.upper_bound(1000) && i != map_data.end()); i++)
+    {
+        result.push_back(i->second);
+    }
+    return result;
+}
+
+auto task_3(vector<Account> base) {
+    unordered_map<string, int> umap_data;
+    for (auto i : base) {
+        string& l = i.shell;
+        if (umap_data.count(l) == 0)
+            umap_data.insert({ l,0 });
+        umap_data[l]++;
+    };
+    return umap_data;
+}
+
+auto task_4(vector<Account> base) {
+    unordered_set<int> u_set;
+    vector<Account> result;
+    for (auto i : base)
+    {
+        if (u_set.insert(i.id).second == 0) result.push_back(i);
+    }
+    return result;
 }
