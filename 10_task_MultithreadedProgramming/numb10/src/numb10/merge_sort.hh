@@ -4,11 +4,13 @@
 #include <cassert>
 #include <chrono>
 
+// функция слияния двух отсортированных массивов в один отсортированный
 void merge_arrays(std::vector<int>& arr, std::vector<int>& buffer, size_t length_left, size_t length_right, int start_left, int start_right)
 {
 	int idx_left, idx_right, idx_buffer;
 	idx_left = idx_right = idx_buffer = 0;
 
+	// слияние массивов, пока не дойдем до конца одного из них
 	while ((idx_left < length_left) && (idx_right < length_right))
 	{
 		if (arr[start_left + idx_left] < arr[start_right + idx_right])
@@ -29,6 +31,7 @@ void merge_arrays(std::vector<int>& arr, std::vector<int>& buffer, size_t length
 		}
 	}
 
+	// слияние остатка не законченного массива с итоговым
 	if (idx_left == length_left)
 	{
 		for (; idx_right < length_right; ++idx_right)
@@ -46,28 +49,34 @@ void merge_arrays(std::vector<int>& arr, std::vector<int>& buffer, size_t length
 		}
 	}
 
+	// копирование итогового упорядоченного массива в исходный
 	for (int i = 0; i < idx_buffer; ++i)
 	{
 		arr[start_left + i] = buffer[start_left + i];
 	}
 }
 
+// функция сортировки, рекурсивно сортирующая свои половины слиянием
 void merge_sort(std::vector<int>& arr, std::vector<int>& buffer, size_t length, int from)
 {
+	// массив длины 1 упорядочен
 	if (length == 1)
 	{
 		return;
 	}
-
+	// делим массив пополам
 	int length_left = length / 2;
 	int length_right = length - length_left;
 
+	// вызываем рекурсию для левой и правой части
 	merge_sort(arr, buffer, length_left, from);
 	merge_sort(arr, buffer, length_right, from + length_left);
 
+	// слияние упорядоченных частей
 	merge_arrays(arr, buffer, length_left, length - length_left, from, from + length_left);
 }
 
+// финальное рекурсивное слияние кусочков, отсортированных потоками
 int merge_sorted_after_multithreading(std::vector<int>& arr, std::vector<int>& buffer,
 	std::vector<int>& thread_from, std::vector<int>& thread_length,
 	unsigned int threads_count, int i_thread)
@@ -80,15 +89,15 @@ int merge_sorted_after_multithreading(std::vector<int>& arr, std::vector<int>& b
 	int count_right = threads_count - count_left;
 	int i_thread_right = i_thread + count_left;
 
-
+	// вызываем рекурсию для левой и правой части
 	int length_left_merged = merge_sorted_after_multithreading(arr, buffer, thread_from, thread_length, count_left, i_thread_left);
 	int length_rigth_merged = merge_sorted_after_multithreading(arr, buffer, thread_from, thread_length, count_right, i_thread_right);
 
+	// слияние упорядоченных частей
 	merge_arrays(arr, buffer, length_left_merged, length_rigth_merged, thread_from[i_thread_left], thread_from[i_thread_right]);
-
 	return length_left_merged + length_rigth_merged;
 }
-
+// функция делит массив на примерно равные части и записывает их длины и индексы начала в массиве
 void make_parts(std::vector<int>& thread_from, std::vector<int>& thread_length, unsigned int threads_count, size_t length)
 {
 	int dlength = (length / threads_count);
@@ -109,26 +118,32 @@ void make_parts(std::vector<int>& thread_from, std::vector<int>& thread_length, 
 	}
 }
 
+// функция многопоточной сортировки слиянием
 void merge_sort_multithread(std::vector<int>& arr, std::vector<int>& buffer, unsigned int threads_count)
 {
 	int length = arr.size();
 	std::vector<std::thread> threads;
 
+	// делим массив на примерно равные части, вычисляем указатели на начала частей и их длины
 	std::vector<int> thread_from;
 	std::vector<int> thread_length;
 	make_parts(thread_from, thread_length, threads_count, length);
 
+	// запускаем все потоки
 	for (int i = 0; i < threads_count; ++i)
 	{
 		threads.push_back(std::thread(merge_sort, std::ref(arr), std::ref(buffer), thread_length[i], thread_from[i]));
 	}
-
+	
+	// ожидаем пока все выполнятся
 	for (int i = 0; i < threads_count; ++i)
 		threads[i].join();
 
 	merge_sorted_after_multithreading(arr, buffer, thread_from, thread_length, threads_count, 0);
 }
+//-------------------------------------------------------------
 
+// проверка того, что массив является возрастающим
 bool is_increasing_array(std::vector<int>& arr)
 {
 	for (int j = 0; j < arr.size() - 1; ++j)
@@ -139,6 +154,8 @@ bool is_increasing_array(std::vector<int>& arr)
 	return true;
 }
 
+// внутри многопоточной сортировки: после выполнения потоков но до слияние сортированный частей
+// можно проверить что они отсортированы по возрастанию
 void is_increasing_for_sorted_parts(std::vector<int>& arr, std::vector<int>& thread_from, std::vector<int>& thread_length)
 {
 	for (int i = 0; i < thread_from.size(); ++i)
@@ -151,12 +168,14 @@ void is_increasing_for_sorted_parts(std::vector<int>& arr, std::vector<int>& thr
 	}
 }
 
+// генерация массива заданной длины
 void generate_int_array(std::vector<int>& arr, int length)
 {
 	for (int i = 0; i < length; ++i)
 		arr.push_back(rand() % 15);
 }
 
+// проверка равенства двух массивов одинаковой длины
 int compare_arrays(std::vector<int>& arr1, std::vector<int>& arr2)
 {
 	for (int k = 0; k < arr1.size(); ++k)
